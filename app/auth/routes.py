@@ -68,3 +68,10 @@ def login():
             return redirect("/player/dashboard")
         return "Failed"
     return render_template("auth/login.html")
+
+@auth_bp.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        # Later: send OTP / reset link
+        return redirect("/login")
+    return render_template("auth/forgot_password.html")
