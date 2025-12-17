@@ -5,9 +5,23 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="alerts">
+      {% for category, message in messages %}
+        <div class="alert {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
 
 {% block body %}{% endblock %}
 
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
+
+{% if session.get("role") == "admin" %}
+  <a href="/admin/dashboard">Admin</a>
+{% endif %}
+

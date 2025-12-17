@@ -1,30 +1,19 @@
-{% extends "layout.html" %}
-{% import "_macros.html" as macros %}
-{% block body %}
+{% extends "base.html" %}
+{% block content %}
 
-<div class="main-content">
-  <h2>All Venues</h2>
-  <form method="GET">
-    <input type="text" name="search" value="{{ search }}" placeholder="Search venues...">
-    <button type="submit">Search</button>
-  </form>
+<h1>Browse Venues</h1>
 
-  <div class="venue-cards-container">
-    {% for venue in venues %}
-    <div class="venue-card">
-      <div class="venue-image">
-        <img src="{{ venue.image_url or url_for('static', filename='img/default_venue.jpg') }}">
-      </div>
-      <div class="venue-details">
-        <h3>{{ venue.name }}</h3>
-        <p>{{ venue.city }}, {{ venue.address }}</p>
-        <a href="/player/venue/{{ venue.id }}" class="btn-view-slots">View Slots</a>
-      </div>
+<div class="card-grid">
+{% for venue in venues %}
+    <div class="card">
+        <img src="{{ url_for('static', filename='images/turf1.jpg') }}">
+        <div class="card-body">
+            <h3>{{ venue.name }}</h3>
+            <p>{{ venue.location }}</p>
+            <a href="{{ url_for('player.venue_detail', venue_id=venue.id) }}">View Slots</a>
+        </div>
     </div>
-    {% endfor %}
-  </div>
-
-  {{ macros.render_pagination(pagination, "player.player_venues", search=search)}}
+{% endfor %}
 </div>
 
 {% endblock %}

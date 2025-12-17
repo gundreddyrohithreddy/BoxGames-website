@@ -1,102 +1,73 @@
-from flask import Blueprint, render_template, request, redirect, session
-from datetime import datetime, timedelta
-import random
-from flask import session
-from ..extensions import db, bcrypt
-from ..models.user import User, Role
-from ..models.otp import OTP
+from flask import Blueprint, render_template, redirect, url_for, flash, request
+from app import db, bcrypt
+from app.models import User
+from flask_login import login_user, current_user, logout_user, login_required
 
-auth_bp = Blueprint("auth_bp", __name__)
+auth = Blueprint('auth', __name__)
 
-def generate_otp():
-    return f"{random.randint(1000, 9999)}"
+@auth.route('/')
+@auth.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        # Redirect based on role
+        if current_user.role == 'admin':
+            return redirect(url_for('admin.dashboard'))
+        elif current_user.role == 'owner':
+            return redirect(url_for('owner.dashboard'))
+        else:
+            return redirect(url_for('player.dashboard'))
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        user = User.query.filter_by(email=email).first()
+        if user and bcrypt.check_password_hash(user.password, password):
+            login_user(user)
+            next_page = request.args.get('next')
+            if next_page:
+                return redirect(next_page)
+            if user.role == 'admin':
+                return redirect(url_for('admin.dashboard'))
+            elif user.role == 'owner':
+                return redirect(url_for('owner.dashboard'))
+            else:
+                return redirect(url_for('player.dashboard'))
+        else:
+            flash('Login unsuccessful. Please check email and password', 'danger')
+    return render_template('login.html')
 
-@auth_bp.route("/")
-def home():
-    return redirect("/login")
-
-@auth_bp.route("/register", methods=["GET","POST"])
+@auth.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == "POST":
-        full_name = request.form["full_name"]
-        email = request.form["email"]
-        phone = request.form["phone"]
-        password = request.form["password"]
-        confirm_password = request.form["confirm_password"]
-        role = request.form["role"]
-
+    if current_user.is_authenticated:
+        if current_user.role == 'admin':
+            return redirect(url_for('admin.dashboard'))
+        elif current_user.role == 'owner':
+            return redirect(url_for('owner.dashboard'))
+        else:
+            return redirect(url_for('player.dashboard'))
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        role = request.form.get('role')
         if password != confirm_password:
-            return "Passwords do not match!"
-
-        hashed_pwd = bcrypt.generate_password_hash(password).decode('utf-8')
-        user = User(full_name=full_name, email=email, phone=phone,
-                    password_hash=hashed_pwd, role_id=1)
+            flash('Passwords do not match', 'danger')
+            return redirect(url_for('auth.register'))
+        if User.query.filter_by(email=email).first():
+            flash('Email already registered', 'danger')
+            return redirect(url_for('auth.register'))
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        if role not in ['player', 'owner']:
+            role = 'player'
+        user = User(username=username, email=email, password=hashed_password, role=role)
         db.session.add(user)
         db.session.commit()
+        flash('Account created successfully! You can now log in.', 'success')
+        return redirect(url_for('auth.login'))
+    return render_template('register.html')
 
-        otp = OTP(user_phone=phone, otp_code=generate_otp(),
-                  expires_at=datetime.utcnow()+timedelta(minutes=5))
-        db.session.add(otp)
-        db.session.commit()
-
-        return redirect("/verify-otp")
-    return render_template("auth/register.html")
-
-@auth_bp.route("/verify-otp", methods=["GET","POST"])
-def verify_otp():
-    if request.method == "POST":
-        phone = request.form["phone"]
-        otp_code = request.form["otp_code"]
-        record = OTP.query.filter_by(user_phone=phone, otp_code=otp_code).first()
-        if record and not record.is_used:
-            user = User.query.filter_by(phone=phone).first()
-            user.is_verified = True
-            record.is_used = True
-            db.session.commit()
-            return redirect("/login")
-        return "Invalid OTP"
-    return render_template("auth/verify_otp.html")
-
-@auth_bp.route("/login", methods=["GET","POST"])
-def login():
-    if request.method == "POST":
-        cred = request.form["email_or_phone"]
-        pwd = request.form["password"]
-        user = User.query.filter((User.email==cred)|(User.phone==cred)).first()
-        if user and bcrypt.check_password_hash(user.password_hash, pwd):
-            session["user_id"] = user.id
-            return redirect("/player/dashboard")
-        return "Failed"
-    return render_template("auth/login.html")
-
-@auth_bp.route("/forgot-password", methods=["GET", "POST"])
-def forgot_password():
-    if request.method == "POST":
-        # Later: send OTP / reset link
-        return redirect("/login")
-    return render_template("auth/forgot_password.html")
-
-@auth_bp.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        cred = request.form["email_or_phone"]
-        password = request.form["password"]
-
-        user = User.query.filter(
-            (User.email == cred) | (User.phone == cred)
-        ).first()
-
-        if user and bcrypt.check_password_hash(user.password_hash, password):
-            session["user_id"] = user.id
-            session["role"] = user.role
-
-            if user.role == "owner":
-                return redirect("/owner/dashboard")
-            elif user.role == "admin":
-                return redirect("/admin/dashboard")
-            else:
-                return redirect("/player/dashboard")
-
-        return "Invalid credentials", 401
-
-    return render_template("auth/login.html")
+@auth.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('auth.login'))

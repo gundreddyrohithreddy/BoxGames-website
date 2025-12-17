@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Edit User{% endblock %}
+{% block content %}
+    <h2>Edit User</h2>
+    <form method="POST" action="{{ url_for('admin.edit_user', user_id=user.id) }}">
+        <label>Username:</label><br>
+        <input type="text" name="username" value="{{ user.username }}" required><br><br>
+        <label>Email:</label><br>
+        <input type="email" name="email" value="{{ user.email }}" required><br><br>
+        <label>Role:</label><br>
+        <select name="role">
+            <option value="player" {% if user.role == 'player' %}selected{% endif %}>Player</option>
+            <option value="owner" {% if user.role == 'owner' %}selected{% endif %}>Owner</option>
+            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+        </select><br><br>
+        <input type="submit" value="Update User">
+    </form>
+{% endblock %}

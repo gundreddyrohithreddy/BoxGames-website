@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Venue Details{% endblock %}
+{% block content %}
+    <h2>{{ venue.name }}</h2>
+    <p><strong>Location:</strong> {{ venue.location }}</p>
+    <h3>Available Slots</h3>
+    {% if grounds %}
+        {% for ground in grounds %}
+            <h4>{{ ground.name }}</h4>
+            <ul>
+            {% if available_slots[ground] %}
+                {% for slot in available_slots[ground] %}
+                    <li>{{ slot.start_time.strftime("%Y-%m-%d %H:%M") }} - {{ slot.end_time.strftime("%H:%M") }}
+                        [<a href="{{ url_for('player.book_slot', slot_id=slot.id) }}">Book</a>]
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li>No available slots for this ground.</li>
+            {% endif %}
+            </ul>
+        {% endfor %}
+    {% else %}
+        <p>No grounds available at this venue.</p>
+    {% endif %}
+    <a href="{{ url_for('player.venues') }}">Back to Venues</a>
+{% endblock %}

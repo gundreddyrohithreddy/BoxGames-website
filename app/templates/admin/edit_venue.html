@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Edit Venue{% endblock %}
+{% block content %}
+    <h2>Edit Venue</h2>
+    <form method="POST" action="{{ url_for('admin.edit_venue', venue_id=venue.id) }}">
+        <label>Name:</label><br>
+        <input type="text" name="name" value="{{ venue.name }}" required><br><br>
+        <label>Location:</label><br>
+        <input type="text" name="location" value="{{ venue.location }}"><br><br>
+        <label>Owner:</label><br>
+        <select name="owner_id">
+            {% for owner in owners %}
+                <option value="{{ owner.id }}" {% if venue.owner_id == owner.id %}selected{% endif %}>{{ owner.username }}</option>
+            {% endfor %}
+        </select><br><br>
+        <input type="submit" value="Update Venue">
+    </form>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Create Slot{% endblock %}
+{% block content %}
+    <h2>Create Slot for "{{ ground.name }}"</h2>
+    <form method="POST" action="{{ url_for('owner.create_slot', venue_id=venue.id, ground_id=ground.id) }}">
+        <label>Start Time:</label><br>
+        <input type="datetime-local" name="start_time" required><br><br>
+        <label>End Time:</label><br>
+        <input type="datetime-local" name="end_time" required><br><br>
+        <input type="submit" value="Create Slot">
+    </form>
+{% endblock %}

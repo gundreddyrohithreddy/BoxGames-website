@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Edit Slot{% endblock %}
+{% block content %}
+    <h2>Edit Slot for "{{ ground.name }}"</h2>
+    <form method="POST" action="{{ url_for('owner.edit_slot', venue_id=venue.id, ground_id=ground.id, slot_id=slot.id) }}">
+        <label>Start Time:</label><br>
+        <input type="datetime-local" name="start_time" value="{{ slot.start_time.strftime('%Y-%m-%dT%H:%M') }}" required><br><br>
+        <label>End Time:</label><br>
+        <input type="datetime-local" name="end_time" value="{{ slot.end_time.strftime('%Y-%m-%dT%H:%M') }}" required><br><br>
+        <input type="submit" value="Update Slot">
+    </form>
+{% endblock %}

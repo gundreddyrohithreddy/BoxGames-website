@@ -1,0 +1,13 @@
+<form method="GET">
+  <input type="date" name="date">
+  <button>Filter</button>
+</form>
+
+{% for s in slots %}
+  <div>
+    {{ s.slot_date }} {{ s.start_time }}–{{ s.end_time }} ₹{{ s.price }}
+    <form method="POST" action="/player/book/{{ s.id }}">
+      <button>Book</button>
+    </form>
+  </div>
+{% endfor %}

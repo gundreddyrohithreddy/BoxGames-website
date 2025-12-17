@@ -1,13 +1,13 @@
-{% extends "layout.html" %}
-{% block body %}
-<nav class="sidebar">
-  <a href="/owner/dashboard">Home</a>
-  <a href="/owner/venues">My Venues</a>
-  <a href="/owner/bookings">All Bookings</a>
-  <a href="/logout">Logout</a>
-</nav>
-<div class="main-content">
-  <h2>Owner Dashboard</h2>
-  <p>Manage your venues and slots.</p>
-</div>
+{% extends "base.html" %}
+{% block title %}Owner Dashboard{% endblock %}
+{% block content %}
+    <h2>Welcome, {{ current_user.username }} (Owner)!</h2>
+    <p>Manage your venues below.</p>
+    <ul>
+    {% for venue in venues %}
+        <li><a href="{{ url_for('owner.grounds', venue_id=venue.id) }}">{{ venue.name }}</a></li>
+    {% else %}
+        <li>You have no venues. <a href="{{ url_for('owner.create_venue') }}">Create one</a>.</li>
+    {% endfor %}
+    </ul>
 {% endblock %}

@@ -1,27 +1,20 @@
-{% extends "layout.html" %}
-{% import "_macros.html" as macros %}
-{% block body %}
-<div class="main-content">
-  <h2>My Venues</h2>
-
-  <form method="GET">
-    <input type="text" name="search" value="{{ search }}" placeholder="Search venues...">
-    <button type="submit">Search</button>
-  </form>
-
-  <table class="data-table">
-    <thead><tr><th>Name</th><th>City</th><th>Address</th></tr></thead>
-    <tbody>
-      {% for v in venues %}
-      <tr>
-        <td>{{ v.name }}</td>
-        <td>{{ v.city }}</td>
-        <td>{{ v.address }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  {{ macros.render_pagination(pagination, "owner.owner_venues", search=search) }}
-</div>
+{% extends "base.html" %}
+{% block title %}My Venues{% endblock %}
+{% block content %}
+    <h2>My Venues</h2>
+    <a href="{{ url_for('owner.create_venue') }}">Create New Venue</a>
+    <ul>
+    {% for venue in venues %}
+        <li>
+            <strong>{{ venue.name }}</strong> - {{ venue.location }}
+            [<a href="{{ url_for('owner.edit_venue', venue_id=venue.id) }}">Edit</a>]
+            [<a href="{{ url_for('owner.grounds', venue_id=venue.id) }}">Manage Grounds</a>]
+            <form method="POST" action="{{ url_for('owner.delete_venue', venue_id=venue.id) }}" style="display:inline;">
+                <input type="submit" value="Delete">
+            </form>
+        </li>
+    {% else %}
+        <li>No venues created yet.</li>
+    {% endfor %}
+    </ul>
 {% endblock %}

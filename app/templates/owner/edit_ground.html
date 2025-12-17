@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Edit Ground{% endblock %}
+{% block content %}
+    <h2>Edit Ground in "{{ venue.name }}"</h2>
+    <form method="POST" action="{{ url_for('owner.edit_ground', venue_id=venue.id, ground_id=ground.id) }}">
+        <label>Name:</label><br>
+        <input type="text" name="name" value="{{ ground.name }}" required><br><br>
+        <input type="submit" value="Update Ground">
+    </form>
+{% endblock %}

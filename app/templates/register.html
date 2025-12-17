@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+    <h2>Register</h2>
+    <form method="POST" action="{{ url_for('auth.register') }}" onsubmit="return validateRegistration()">
+        <label>Username:</label><br>
+        <input type="text" name="username" required><br><br>
+        <label>Email:</label><br>
+        <input type="email" name="email" required><br><br>
+        <label>Password:</label><br>
+        <input type="password" name="password" id="password" required><br><br>
+        <label>Confirm Password:</label><br>
+        <input type="password" name="confirm_password" id="confirm_password" required><br><br>
+        <label>Role:</label><br>
+        <input type="radio" name="role" value="player" checked> Player<br>
+        <input type="radio" name="role" value="owner"> Owner<br><br>
+        <input type="submit" value="Register">
+    </form>
+    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>.</p>
+{% endblock %}

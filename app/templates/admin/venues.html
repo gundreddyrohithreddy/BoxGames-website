@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Manage Venues{% endblock %}
+{% block content %}
+    <h2>Manage Venues</h2>
+    <a href="{{ url_for('admin.create_venue') }}">Create New Venue</a>
+    <table border="1" cellpadding="5">
+        <tr><th>Name</th><th>Location</th><th>Owner</th><th>Actions</th></tr>
+        {% for venue in venues %}
+            <tr>
+                <td>{{ venue.name }}</td>
+                <td>{{ venue.location }}</td>
+                <td>{{ venue.owner.username }}</td>
+                <td>
+                    <a href="{{ url_for('admin.edit_venue', venue_id=venue.id) }}">Edit</a>
+                    <form method="POST" action="{{ url_for('admin.delete_venue', venue_id=venue.id) }}" style="display:inline;">
+                        <input type="submit" value="Delete">
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

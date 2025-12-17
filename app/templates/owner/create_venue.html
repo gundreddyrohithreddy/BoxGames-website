@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Create Venue{% endblock %}
+{% block content %}
+    <h2>Create Venue</h2>
+    <form method="POST" action="{{ url_for('owner.create_venue') }}">
+        <label>Name:</label><br>
+        <input type="text" name="name" required><br><br>
+        <label>Location:</label><br>
+        <input type="text" name="location"><br><br>
+        <input type="submit" value="Create">
+    </form>
+{% endblock %}

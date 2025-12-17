@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Add Ground{% endblock %}
+{% block content %}
+    <h2>Add Ground to "{{ venue.name }}"</h2>
+    <form method="POST" action="{{ url_for('owner.create_ground', venue_id=venue.id) }}">
+        <label>Name:</label><br>
+        <input type="text" name="name" required><br><br>
+        <input type="submit" value="Add Ground">
+    </form>
+{% endblock %}
