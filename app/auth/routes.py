@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, session
 from datetime import datetime, timedelta
 import random
-
+from flask import session
 from ..extensions import db, bcrypt
 from ..models.user import User, Role
 from ..models.otp import OTP
@@ -75,3 +75,28 @@ def forgot_password():
         # Later: send OTP / reset link
         return redirect("/login")
     return render_template("auth/forgot_password.html")
+
+@auth_bp.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        cred = request.form["email_or_phone"]
+        password = request.form["password"]
+
+        user = User.query.filter(
+            (User.email == cred) | (User.phone == cred)
+        ).first()
+
+        if user and bcrypt.check_password_hash(user.password_hash, password):
+            session["user_id"] = user.id
+            session["role"] = user.role
+
+            if user.role == "owner":
+                return redirect("/owner/dashboard")
+            elif user.role == "admin":
+                return redirect("/admin/dashboard")
+            else:
+                return redirect("/player/dashboard")
+
+        return "Invalid credentials", 401
+
+    return render_template("auth/login.html")
