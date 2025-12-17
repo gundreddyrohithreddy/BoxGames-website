@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Verify OTP</title>
-</head>
-<body>
-<h2>Verify OTP</h2>
-<form method="POST">
-    <input type="text" name="phone" placeholder="Phone" required><br>
-    <input type="text" name="otp_code" placeholder="Enter 4-digit OTP" required><br>
+{% extends "layout.html" %}
+{% block body %}
+<div class="container">
+  <h2>Verify OTP</h2>
+  <form method="POST" onsubmit="return validateOTP()">
+    <input type="text" id="otp_phone" name="phone" placeholder="Phone" required>
+    <input type="text" id="otp_code" name="otp_code" placeholder="4-digit OTP" required>
     <button type="submit">Verify</button>
-</form>
-</body>
-</html>
+  </form>
+</div>
+{% endblock %}

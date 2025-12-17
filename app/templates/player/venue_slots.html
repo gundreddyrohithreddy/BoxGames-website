@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% import "_macros.html" as macros %}
+{% block body %}
+
+<div class="main-content">
+  <h2>Slots</h2>
+  <form method="GET">
+    <input type="date" name="filter_date" value="{{ filter_date }}">
+    <button type="submit">Filter</button>
+  </form>
+
+  <table class="data-table">
+    <thead><tr><th>Date</th><th>Time</th><th>Price</th></tr></thead>
+    <tbody>
+      {% for slot in slots %}
+      <tr>
+        <td>{{ slot.slot_date }}</td>
+        <td>{{ slot.start_time }} - {{ slot.end_time }}</td>
+        <td>{{ slot.price }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {{ macros.render_pagination(pagination, "player.venue_slots", filter_date=filter_date) }}
+</div>
+
+{% endblock %}

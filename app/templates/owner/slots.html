@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% import "_macros.html" as macros %}
+{% block body %}
+<div class="main-content">
+  <h2>Manage Slots</h2>
+
+  <form method="GET">
+    <input type="date" name="filter_date" value="{{ filter_date }}">
+    <button type="submit">Filter</button>
+  </form>
+
+  <table class="data-table">
+    <thead><tr><th>Date</th><th>Time</th><th>Price</th><th>Booked</th></tr></thead>
+    <tbody>
+      {% for slot in slots %}
+      <tr>
+        <td>{{ slot.slot_date }}</td>
+        <td>{{ slot.start_time }} - {{ slot.end_time }}</td>
+        <td>{{ slot.price }}</td>
+        <td>{{ "Yes" if slot.is_booked else "No" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {{ macros.render_pagination(pagination, "owner.owner_venue_slots", filter_date=filter_date) }}
+</div>
+{% endblock %}

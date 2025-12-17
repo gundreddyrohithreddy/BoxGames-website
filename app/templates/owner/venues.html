@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% import "_macros.html" as macros %}
+{% block body %}
+<div class="main-content">
+  <h2>My Venues</h2>
+
+  <form method="GET">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search venues...">
+    <button type="submit">Search</button>
+  </form>
+
+  <table class="data-table">
+    <thead><tr><th>Name</th><th>City</th><th>Address</th></tr></thead>
+    <tbody>
+      {% for v in venues %}
+      <tr>
+        <td>{{ v.name }}</td>
+        <td>{{ v.city }}</td>
+        <td>{{ v.address }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {{ macros.render_pagination(pagination, "owner.owner_venues", search=search) }}
+</div>
+{% endblock %}

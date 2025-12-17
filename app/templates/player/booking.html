@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% import "_macros.html" as macros %}
+{% block body %}
+
+<div class="main-content">
+  <h2>My Bookings</h2>
+
+  <form method="GET">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search bookings...">
+    <button type="submit">Search</button>
+  </form>
+
+  <table class="data-table">
+    <thead><tr><th>Venue</th><th>Date</th><th>Time</th></tr></thead>
+    <tbody>
+      {% for b in bookings %}
+      <tr>
+        <td>{{ b.slot.venue.name }}</td>
+        <td>{{ b.slot.slot_date }}</td>
+        <td>{{ b.slot.start_time }} - {{ b.slot.end_time }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {{ macros.render_pagination(pagination, "player.player_bookings", search=search) }}
+</div>
+
+{% endblock %}
