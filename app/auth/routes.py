@@ -11,6 +11,10 @@ auth_bp = Blueprint("auth_bp", __name__)
 def generate_otp():
     return f"{random.randint(1000, 9999)}"
 
+@auth_bp.route("/")
+def home():
+    return redirect("/login")
+
 @auth_bp.route("/register", methods=["GET","POST"])
 def register():
     if request.method == "POST":
